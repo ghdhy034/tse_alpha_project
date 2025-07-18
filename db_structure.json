@@ -1,0 +1,846 @@
+{
+    "database": "stock_data.db",
+    "analyzed_at": "2025-07-10T17:06:39.808495",
+    "tables": [
+        {
+            "table_name": "candlesticks_min",
+            "row_count": 11467227,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "market",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "timestamp",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "open",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "high",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "low",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "close",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "volume",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 9,
+                    "name": "interval",
+                    "type": "TEXT",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "financials",
+            "row_count": 3770,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "cost_of_goods_sold",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "eps",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "pe_ratio",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "equity_attributable_to_owners",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "gross_profit",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "income_after_taxes",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 9,
+                    "name": "income_from_continuing_operations",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 10,
+                    "name": "noncontrolling_interests",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 11,
+                    "name": "operating_expenses",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 12,
+                    "name": "operating_income",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 13,
+                    "name": "other_comprehensive_income",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 14,
+                    "name": "pre_tax_income",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 15,
+                    "name": "realized_gain",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 16,
+                    "name": "revenue",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 17,
+                    "name": "tax",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 18,
+                    "name": "total_profit",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 19,
+                    "name": "nonoperating_income_expense",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "technical_indicators",
+            "row_count": 233560,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "market",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "sma_5",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "sma_20",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "sma_60",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "ema_12",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "ema_26",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 9,
+                    "name": "ema_50",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 10,
+                    "name": "macd",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 11,
+                    "name": "macd_signal",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 12,
+                    "name": "macd_hist",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 13,
+                    "name": "keltner_upper",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 14,
+                    "name": "keltner_middle",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 15,
+                    "name": "keltner_lower",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 16,
+                    "name": "bollinger_upper",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 17,
+                    "name": "bollinger_middle",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 18,
+                    "name": "bollinger_lower",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 19,
+                    "name": "pct_b",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 20,
+                    "name": "bandwidth",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "monthly_revenue",
+            "row_count": 11409,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "monthly_revenue",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "margin_purchase_shortsale",
+            "row_count": 232260,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "MarginPurchaseBuy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "MarginPurchaseCashRepayment",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "MarginPurchaseLimit",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "MarginPurchaseSell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "MarginPurchaseTodayBalance",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "MarginPurchaseYesterdayBalance",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 9,
+                    "name": "OffsetLoanAndShort",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 10,
+                    "name": "ShortSaleBuy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 11,
+                    "name": "ShortSaleCashRepayment",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 12,
+                    "name": "ShortSaleLimit",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 13,
+                    "name": "ShortSaleSell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 14,
+                    "name": "ShortSaleTodayBalance",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 15,
+                    "name": "ShortSaleYesterdayBalance",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "institutional_investors_buy_sell",
+            "row_count": 230655,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "Dealer_Hedging_buy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "Dealer_self_buy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "Foreign_Dealer_Self_buy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "Foreign_Investor_buy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "Investment_Trust_buy",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "Dealer_Hedging_sell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 9,
+                    "name": "Dealer_self_sell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 10,
+                    "name": "Foreign_Dealer_Self_sell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 11,
+                    "name": "Foreign_Investor_sell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 12,
+                    "name": "Investment_Trust_sell",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "financial_per",
+            "row_count": 233329,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "dividend_yield",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "PER",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "PBR",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        },
+        {
+            "table_name": "candlesticks_daily",
+            "row_count": 233560,
+            "columns": [
+                {
+                    "column_id": 0,
+                    "name": "id",
+                    "type": "INTEGER",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": true
+                },
+                {
+                    "column_id": 1,
+                    "name": "market",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 2,
+                    "name": "symbol",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 3,
+                    "name": "date",
+                    "type": "TEXT",
+                    "not_null": true,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 4,
+                    "name": "open",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 5,
+                    "name": "high",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 6,
+                    "name": "low",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 7,
+                    "name": "close",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                },
+                {
+                    "column_id": 8,
+                    "name": "volume",
+                    "type": "REAL",
+                    "not_null": false,
+                    "default": null,
+                    "is_primary_key": false
+                }
+            ]
+        }
+    ]
+}

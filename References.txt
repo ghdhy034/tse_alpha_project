@@ -1,0 +1,12 @@
+   **其他特徵 (每日更新)**：
+   - `candlesticks_daily`: 5個特徵 (OHLCV)
+   - `technical_indicators`: 17個特徵 (技術指標)
+   - `margin_purchase_shortsale`: 13個特徵 (融資融券)
+   - `institutional_investors_buy_sell`: 8個特徵 (法人進出，排除Foreign_Dealer_Self)
+   - `financial_per`: 3個特徵 (本益比等估值指標)
+   - `intraday_structure`: 5個特徵 (從5分K萃取的日內結構信號)
+   - 小計：51個其他特徵
+
+   **帳戶狀態**：4個特徵 (由環境即時計算)
+
+   **總計**：15 + 51 + 4 = 70個特徵
