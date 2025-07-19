@@ -15,9 +15,9 @@ import numpy as np
 @dataclass
 class ModelConfig:
     """模型配置"""
-    # 輸入維度 (與 Gym 環境觀測空間對應，基於75維特徵配置)
-    price_frame_shape: Tuple[int, int, int] = (10, 64, 53)  # (n_stocks, seq_len, other_features)
-    fundamental_dim: int = 18  # 基本面特徵 (月/季度更新)
+    # 輸入維度 (與 Gym 環境觀測空間對應，基於66維特徵配置)
+    price_frame_shape: Tuple[int, int, int] = (10, 64, 51)  # (n_stocks, seq_len, other_features)
+    fundamental_dim: int = 15  # 基本面特徵 (15個，66維配置)
     account_dim: int = 4       # 帳戶狀態特徵
     
     # 模型架構參數

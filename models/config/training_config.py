@@ -43,12 +43,12 @@ class TrainingConfig:
     })
     
     # 張量維度配置 ====================
-    # 基於 70維特徵配置 (15基本面 + 51其他 + 4帳戶)
+    # 基於 66維特徵配置 (15基本面 + 51其他，帳戶特徵暫不使用)
     sequence_length: int = 64                # 64個5分鐘bar ≈ 1交易日 (320分鐘)
     fundamental_features: int = 15           # 基本面特徵 (月/季度更新): monthly_revenue(1) + financials(14)
     other_features: int = 51                 # 其他特徵 (每日更新): 價量+技術+籌碼+估值+日內結構
-    account_features: int = 4                # 帳戶狀態特徵: NAV, 現金比, 曝險, MaxDD
-    total_features: int = 70                 # 總特徵數: 15 + 51 + 4 = 70
+    account_features: int = 0                # 帳戶狀態特徵: 未來待加入 (暫不使用)
+    total_features: int = 66                 # 總特徵數: 15 + 51 + 0 = 66
     
     # 其他特徵詳細配置 (51個，每日更新)
     other_features_detail: Dict[str, int] = field(default_factory=lambda: {
@@ -212,10 +212,10 @@ class TrainingConfig:
         if len(self.fundamental_features_list) != 14:  # financials 表的實際可用欄位數
             raise ValueError(f"基本面特徵列表數量不匹配: 期望 14 (financials表實際可用), 實際 {len(self.fundamental_features_list)}")
         
-        # 驗證總特徵數 (確保70維配置正確)
+        # 驗證總特徵數 (確保66維配置正確)
         calculated_total = self.fundamental_features + self.other_features + self.account_features
-        if calculated_total != self.total_features or self.total_features != 70:
-            raise ValueError(f"總特徵數不匹配: 計算值 {calculated_total}, 設定值 {self.total_features}, 要求值 70")
+        if calculated_total != self.total_features or self.total_features != 66:
+            raise ValueError(f"總特徵數不匹配: 計算值 {calculated_total}, 設定值 {self.total_features}, 要求值 66")
         
         # 驗證股票數量
         total_stocks = sum(self.stock_groups.values())

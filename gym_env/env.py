@@ -394,15 +394,15 @@ class TSEAlphaEnv(gym.Env):
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            price_features_count = config.price_features  # 27個特徵
+            price_features_count = config.other_features  # 51個其他特徵 (66維配置)
         except:
-            price_features_count = 27  # 預設值
+            price_features_count = 51  # 預設值 (66維配置)
         
-        # price_frame: 每檔股票 64 天 × 27 個特徵 (OHLCV + 技術指標)
+        # price_frame: 每檔股票 64 天 × 51 個其他特徵 (66維配置)
         price_frame_shape = (len(self.symbols), 64, price_features_count)
         
-        # fundamental: 基本面特徵 (暫時設為 10 個特徵)
-        fundamental_shape = (10,)
+        # fundamental: 基本面特徵 (15個，66維配置)
+        fundamental_shape = (15,)
         
         # account: 帳戶狀態 (4 個特徵)
         account_shape = (4,)
@@ -546,11 +546,11 @@ class TSEAlphaEnv(gym.Env):
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            price_features_count = config.price_features  # 27個特徵
+            price_features_count = config.other_features  # 51個其他特徵 (66維配置)
         except:
-            price_features_count = 27  # 預設值
+            price_features_count = 51  # 預設值 (66維配置)
         
-        # 構建價格框架 - 使用27個特徵
+        # 構建價格框架 - 使用51個其他特徵 (66維配置)
         price_frame = np.zeros((len(self.symbols), 64, price_features_count), dtype=np.float32)
         for i, symbol in enumerate(self.symbols):
             if symbol in obs_data.get('price_frame', {}):
@@ -568,8 +568,8 @@ class TSEAlphaEnv(gym.Env):
                 cols = min(symbol_data.shape[1], price_features_count)
                 price_frame[i, -rows:, :cols] = symbol_data[-rows:, :cols]
         
-        # 基本面特徵 (暫時使用零值)
-        fundamental = np.zeros(10, dtype=np.float32)
+        # 基本面特徵 (15個，66維配置)
+        fundamental = np.zeros(15, dtype=np.float32)
         
         # 帳戶狀態
         nav = self.account_manager.get_nav(current_prices)
@@ -601,6 +601,10 @@ class TSEAlphaEnv(gym.Env):
             'episode_step': self.episode_step_count,
             'current_prices': current_prices
         }
+    
+    def get_account_state(self) -> Dict[str, Any]:
+        """獲取帳戶狀態 (與_get_info相同，提供向後相容性)"""
+        return self._get_info()
     
     def render(self, mode: str = 'human'):
         """渲染環境狀態"""

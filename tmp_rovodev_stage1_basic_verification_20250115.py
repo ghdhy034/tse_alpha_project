@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 生產級煙霧測試 - 階段1: 基礎驗證
-驗證75維特徵配置和核心組件初始化
+驗證66維特徵配置和核心組件初始化
 """
 import sys
 import os
@@ -27,10 +27,10 @@ def print_status(task, status, details=""):
     if details:
         print(f"    詳情: {details}")
 
-def task_1_1_verify_75d_config():
-    """任務1.1: 驗證75維特徵配置載入"""
+def task_1_1_verify_66d_config():
+    """任務1.1: 驗證66維特徵配置載入"""
     print("\n" + "="*60)
-    print("🎯 任務1.1: 驗證75維特徵配置載入")
+    print("🎯 任務1.1: 驗證66維特徵配置載入")
     print("="*60)
     
     try:
@@ -38,11 +38,11 @@ def task_1_1_verify_75d_config():
         from models.config.training_config import TrainingConfig
         config = TrainingConfig()
         
-        # 驗證特徵維度
-        expected_total = 75
-        expected_fundamental = 18
-        expected_other = 53
-        expected_account = 4
+        # 驗證特徵維度 (66維配置: 15基本面 + 51其他 + 0帳戶)
+        expected_total = 66
+        expected_fundamental = 15
+        expected_other = 51
+        expected_account = 0  # 帳戶特徵未來待加入
         
         actual_total = config.total_features
         actual_fundamental = config.fundamental_features
@@ -70,7 +70,7 @@ def task_1_1_verify_75d_config():
         if calculated_total != actual_total:
             raise ValueError(f"特徵總和不匹配: {calculated_total} != {actual_total}")
         
-        print_status("任務1.1", "SUCCESS", "75維特徵配置正確載入")
+        print_status("任務1.1", "SUCCESS", "66維特徵配置正確載入")
         return True
         
     except Exception as e:
@@ -242,7 +242,7 @@ def run_stage1_verification():
     
     # 執行所有任務
     tasks = [
-        ("任務1.1", task_1_1_verify_75d_config),
+        ("任務1.1", task_1_1_verify_66d_config),
         ("任務1.2", task_1_2_check_core_components), 
         ("任務1.3", task_1_3_verify_database_connection)
     ]

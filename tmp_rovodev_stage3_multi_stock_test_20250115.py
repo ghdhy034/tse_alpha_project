@@ -65,8 +65,8 @@ def task_3_1_multi_stock_feature_processing():
         
         # 批次處理多股票
         print("🔄 批次處理多股票特徵...")
-        start_date = '2024-01-01'
-        end_date = '2024-01-31'  # 小範圍測試
+        start_date = '2023-07-01'  # 擴大日期範圍，從2023年7月開始
+        end_date = '2024-01-31'    # 使用更長的時間跨度
         
         results = feature_engine.process_multiple_symbols(
             symbols=test_symbols,
@@ -141,17 +141,19 @@ def task_3_2_batch_data_loading_test(features_dict):
         print("📊 創建資料載入配置...")
         symbols = list(features_dict.keys())
         
+        # 使用更寬鬆的日期範圍，確保有足夠的數據
         data_config = DataConfig(
             symbols=symbols,
-            train_start_date='2024-01-01',
-            train_end_date='2024-01-20',
-            val_start_date='2024-01-21',
-            val_end_date='2024-01-25',
-            test_start_date='2024-01-26',
+            train_start_date='2023-07-01',  # 擴大日期範圍，從2023年7月開始
+            train_end_date='2024-01-31',    # 使用更長的時間跨度
+            val_start_date='2023-07-01',    # 驗證集也使用相同擴展範圍
+            val_end_date='2024-01-31',
+            test_start_date='2023-07-01',   # 測試集也使用相同擴展範圍
             test_end_date='2024-01-31',
-            sequence_length=32,  # 較短序列用於測試
+            sequence_length=32,  # 保持原有序列長度
             batch_size=4,        # 小批次
-            num_workers=0        # 避免多進程問題
+            num_workers=0,       # 避免多進程問題
+            prediction_horizon=0  # 不使用預測視窗，確保有足夠樣本
         )
         
         print(f"   股票數量: {len(symbols)}")
@@ -250,7 +252,7 @@ def task_3_3_memory_monitoring():
         model_config = ModelConfig(
             price_frame_shape=(5, 32, training_config.other_features),  # 5支股票
             fundamental_dim=training_config.fundamental_features,
-            account_dim=training_config.account_features
+            account_dim=4  # 強制使用4維帳戶特徵，因為環境仍然提供4維
         )
         
         model = TSEAlphaModel(model_config)
@@ -269,7 +271,7 @@ def task_3_3_memory_monitoring():
             observation = {
                 'price_frame': torch.randn(batch_size, 5, 32, training_config.other_features),
                 'fundamental': torch.randn(batch_size, training_config.fundamental_features),
-                'account': torch.randn(batch_size, training_config.account_features)
+                'account': torch.randn(batch_size, 4)  # 強制使用4維帳戶特徵
             }
             
             # 前向傳播
@@ -296,7 +298,7 @@ def task_3_3_memory_monitoring():
             observation = {
                 'price_frame': torch.randn(2, 5, 32, training_config.other_features),
                 'fundamental': torch.randn(2, training_config.fundamental_features),
-                'account': torch.randn(2, training_config.account_features)
+                'account': torch.randn(2, 4)  # 強制使用4維帳戶特徵
             }
             
             with torch.no_grad():

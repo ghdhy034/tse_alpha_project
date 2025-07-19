@@ -80,7 +80,7 @@
 
    **帳戶狀態**：4個特徵 (由環境即時計算)
 
-   **總計**：15 + 51 + 4 = 70個特徵
+   **總計**：15 + 51 + 0 = 66個特徵 (帳戶特徵未來待加入)
 
 ## 4. 預設 TrainingConfig 抽要
 
@@ -91,11 +91,11 @@ class TrainingConfig(BaseModel):
     seq_len = 64
     stride = 32
     
-    # 特徵維度配置 (基於72維標準配置)
+    # 特徵維度配置 (基於66維標準配置)
     fundamental_features = 15    # 基本面特徵 (月/季度更新)
-    other_features = 53         # 其他特徵 (每日更新)
-    account_features = 4        # 帳戶狀態特徵
-    total_features = 72         # 總特徵數 (15+53+4) - 統一標準
+    other_features = 51         # 其他特徵 (每日更新)
+    account_features = 0        # 帳戶狀態特徵 (未來待加入)
+    total_features = 66         # 總特徵數 (15+51+0) - 統一標準
 
     batch_size = 128
     accum_steps = 3

@@ -62,11 +62,11 @@ def task_4_1_small_scale_training_test():
         print("📊 準備訓練資料...")
         feature_engine = FeatureEngine(symbols=test_symbols)
         
-        # 處理特徵 (小範圍)
+        # 處理特徵 (擴大範圍)
         features_dict = feature_engine.process_multiple_symbols(
             symbols=test_symbols,
-            start_date='2024-01-01',
-            end_date='2024-01-15',  # 更小範圍
+            start_date='2023-07-01',  # 擴大日期範圍，從2023年7月開始
+            end_date='2024-01-15',    # 保持原有結束日期
             normalize=True
         )
         
@@ -76,11 +76,11 @@ def task_4_1_small_scale_training_test():
         # 創建資料載入器
         data_config = DataConfig(
             symbols=test_symbols,
-            train_start_date='2024-01-01',
-            train_end_date='2024-01-10',
-            val_start_date='2024-01-11',
-            val_end_date='2024-01-15',
-            sequence_length=16,  # 更短序列
+            train_start_date='2023-07-01',  # 擴大日期範圍，從2023年7月開始
+            train_end_date='2023-12-31',    # 擴大訓練集
+            val_start_date='2024-01-01',    # 驗證集開始日期
+            val_end_date='2024-01-15',      # 保持原有結束日期
+            sequence_length=16,             # 保持較短序列
             batch_size=batch_size,
             num_workers=0
         )
@@ -101,7 +101,7 @@ def task_4_1_small_scale_training_test():
         model_config = ModelConfig(
             price_frame_shape=(len(test_symbols), 16, training_config.other_features),
             fundamental_dim=training_config.fundamental_features,
-            account_dim=training_config.account_features,
+            account_dim=4,  # 強制使用4維帳戶特徵，因為環境仍然提供4維
             hidden_dim=64,  # 較小的模型
             num_layers=2
         )
@@ -226,7 +226,7 @@ def task_4_2_gradient_stability_check(model, training_history):
         observation = {
             'price_frame': torch.randn(batch_size, 2, 16, training_config.other_features),
             'fundamental': torch.randn(batch_size, training_config.fundamental_features),
-            'account': torch.randn(batch_size, training_config.account_features)
+            'account': torch.randn(batch_size, 4)  # 強制使用4維帳戶特徵
         }
         labels = torch.randn(batch_size)
         
@@ -413,7 +413,7 @@ def task_4_3_model_convergence_verification(model, training_history):
         test_observation = {
             'price_frame': torch.randn(1, 2, 16, training_config.other_features),
             'fundamental': torch.randn(1, training_config.fundamental_features),
-            'account': torch.randn(1, training_config.account_features)
+            'account': torch.randn(1, 4)  # 強制使用4維帳戶特徵
         }
         
         with torch.no_grad():

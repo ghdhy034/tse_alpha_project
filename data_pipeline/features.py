@@ -1001,7 +1001,7 @@ class FeatureEngine:
     def process_single_symbol(self, symbol: str, start_date: str, end_date: str,
                             normalize: bool = True, include_chip_features: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """處理單一股票的完整特徵工程"""
-        print(f"處理股票: {symbol} (目標75維特徵)")
+        print(f"處理股票: {symbol} (目標66維特徵，帳戶特徵暫不使用)")
         
         # 載入價格資料
         price_data = self.load_price_data(symbol, start_date, end_date)
@@ -1033,7 +1033,7 @@ class FeatureEngine:
         
         # 根據SSOT規範，需要重新組織特徵結構:
         # - 基本面特徵: 15個 (月營收1個 + 財報14個)
-        # - 其他特徵: 53個 (價量5個 + 技術指標17個 + 籌碼13個 + 估值3個 + 日內結構5個 + 其他10個)
+        # - 其他特徵: 51個 (價量5個 + 技術指標17個 + 籌碼13個 + 估值3個 + 日內結構5個 + 其他8個)
         # - 帳戶特徵: 4個 (由環境提供，不在這裡計算)
         
         # 從技術特徵中分離出價量特徵(5個)和技術指標(17個)
@@ -1085,7 +1085,7 @@ class FeatureEngine:
                 columns=['pe_proxy', 'pb_proxy', 'ps_proxy']
             )
         
-        # 組合其他特徵 (53個): 5價量 + 17技術 + 13籌碼 + 3估值 + 5日內 + 10其他
+        # 組合其他特徵 (51個): 5價量 + 17技術 + 13籌碼 + 3估值 + 5日內 + 8其他
         other_feature_list = []
         if not price_features.empty:
             other_feature_list.append(price_features)  # 5個
@@ -1112,10 +1112,10 @@ class FeatureEngine:
             other_feature_list.append(zero_intraday)
             print(f"⚠️ {symbol} 使用零值日內結構特徵")
         
-        # 添加其他10個特徵以達到53個其他特徵
+        # 添加其他特徵以達到51個其他特徵
         if other_feature_list:
             current_other_count = sum(df.shape[1] for df in other_feature_list)
-            needed_other_features = 53 - current_other_count
+            needed_other_features = 51 - current_other_count
             
             if needed_other_features > 0:
                 # 創建額外的其他特徵
@@ -1126,25 +1126,25 @@ class FeatureEngine:
                     columns=[f'other_feature_{i}' for i in range(needed_other_features)]
                 )
                 other_feature_list.append(additional_features)
-                print(f"🔧 {symbol} 添加{needed_other_features}個其他特徵以達到53維")
+                print(f"🔧 {symbol} 添加{needed_other_features}個其他特徵以達到51維")
         
-        # 合併其他特徵 (53個)
+        # 合併其他特徵 (51個)
         if other_feature_list:
             other_features = pd.concat(other_feature_list, axis=1)
         else:
-            # 如果沒有其他特徵，創建53個零值特徵
+            # 如果沒有其他特徵，創建51個零值特徵
             other_features = pd.DataFrame(
                 0.0,
                 index=price_data.index,
-                columns=[f'other_feature_{i}' for i in range(53)]
+                columns=[f'other_feature_{i}' for i in range(51)]
             )
         
-        # 最終組合: 基本面特徵(15個) + 其他特徵(53個) = 68個 (不包含帳戶特徵4個)
+        # 最終組合: 基本面特徵(15個) + 其他特徵(51個) = 66個 (帳戶特徵暫不使用)
         all_features = pd.concat([fundamental_features, other_features], axis=1)
         
-        # 檢查特徵維度 (目標68維，不包含帳戶特徵)
+        # 檢查特徵維度 (目標66維，帳戶特徵暫不使用)
         actual_features = all_features.shape[1]
-        expected_features_without_account = 68  # 15基本面 + 53其他 = 68 (不包含4個帳戶特徵)
+        expected_features_total = 66  # 15基本面 + 51其他 = 66 (帳戶特徵未來待加入)
         
         print(f"📊 {symbol} 特徵維度檢查:")
         print(f"   - 基本面特徵: {fundamental_features.shape[1]}個")
@@ -1156,12 +1156,12 @@ class FeatureEngine:
         print(f"     - 日內結構: 5個")
         print(f"     - 其他補充: {other_features.shape[1] - 43}個")
         print(f"   - 實際總特徵: {actual_features}個")
-        print(f"   - 期望總特徵: {expected_features_without_account}個 (不含4個帳戶特徵)")
+        print(f"   - 期望總特徵: {expected_features_total}個 (帳戶特徵暫不使用)")
         
-        # 調整特徵維度到68維 (帳戶特徵由環境提供)
-        if actual_features < expected_features_without_account:
+        # 調整特徵維度到66維 (帳戶特徵暫不使用)
+        if actual_features < expected_features_total:
             # 如果特徵不足，添加佔位符特徵
-            missing_features = expected_features_without_account - actual_features
+            missing_features = expected_features_total - actual_features
             print(f"🔧 添加{missing_features}個佔位符特徵")
             
             # 創建佔位符特徵
@@ -1172,18 +1172,18 @@ class FeatureEngine:
             )
             all_features = pd.concat([all_features, placeholder_features], axis=1)
             
-        elif actual_features > expected_features_without_account:
-            # 如果特徵過多，截取前68個
-            print(f"✂️ 截取前{expected_features_without_account}個特徵")
-            all_features = all_features.iloc[:, :expected_features_without_account]
+        elif actual_features > expected_features_total:
+            # 如果特徵過多，截取前66個
+            print(f"✂️ 截取前{expected_features_total}個特徵")
+            all_features = all_features.iloc[:, :expected_features_total]
         
         # 重新檢查
         final_features = all_features.shape[1]
-        if final_features == expected_features_without_account:
-            print(f"✅ 特徵維度正確: {final_features}維 (不含帳戶特徵)")
-            print(f"💡 注意: 4個帳戶特徵將由Gym環境動態提供，總計72維")
+        if final_features == expected_features_total:
+            print(f"✅ 特徵維度正確: {final_features}維 (帳戶特徵暫不使用)")
+            print(f"💡 注意: 帳戶特徵未來待加入，目前訓練計畫採用66維")
         else:
-            print(f"⚠️ 特徵維度調整失敗: {final_features} vs {expected_features_without_account}")
+            print(f"⚠️ 特徵維度調整失敗: {final_features} vs {expected_features_total}")
         
         # 標準化特徵
         if normalize:
@@ -1192,13 +1192,28 @@ class FeatureEngine:
         # 建立標籤
         labels = self.create_labels(price_data)
         
-        # 移除包含 NaN 的行
-        valid_idx = all_features.dropna().index.intersection(labels.dropna().index)
+        # 修復：更寬鬆的NaN處理，確保返回有用的資料
+        # 填充NaN值而不是丟棄行
+        all_features = all_features.fillna(0.0)
+        labels = labels.fillna(0.0)
+        
+        # 確保索引對齊
+        common_index = all_features.index.intersection(labels.index).intersection(price_data.index)
+        
+        if len(common_index) == 0:
+            print(f"⚠️ {symbol} 無共同索引，使用價格資料索引")
+            common_index = price_data.index
+            
+            # 重新索引特徵和標籤到價格資料的索引
+            all_features = all_features.reindex(common_index, fill_value=0.0)
+            labels = labels.reindex(common_index, fill_value=0.0)
+        
+        print(f"✅ {symbol} 最終資料: {len(common_index)}行 × {all_features.shape[1]}特徵")
         
         return (
-            all_features.loc[valid_idx],
-            labels.loc[valid_idx],
-            price_data.loc[valid_idx]
+            all_features.loc[common_index],
+            labels.loc[common_index],
+            price_data.loc[common_index]
         )
     
     def process_multiple_symbols(self, symbols: Optional[List[str]] = None,

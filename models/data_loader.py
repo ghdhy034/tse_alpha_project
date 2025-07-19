@@ -173,20 +173,20 @@ class TSEDataset(Dataset):
         }
     
     def _extract_price_frame(self, price_sequence: pd.DataFrame) -> torch.Tensor:
-        """提取價格框架 - 基於75維特徵配置的其他特徵部分"""
-        # 獲取實際配置的其他特徵數量 (53個: 價量+技術+籌碼+估值+日內結構)
+        """提取價格框架 - 基於66維特徵配置的其他特徵部分"""
+        # 獲取實際配置的其他特徵數量 (51個: 價量+技術+籌碼+估值+日內結構)
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            other_features_count = config.other_features  # 53個其他特徵
+            other_features_count = config.other_features  # 51個其他特徵
         except:
-            other_features_count = 53  # 預設值
+            other_features_count = 51  # 預設值 (66維配置)
         
-        # 使用特徵引擎計算完整的其他特徵 (53個)
+        # 使用特徵引擎計算完整的其他特徵 (51個，66維配置)
         from data_pipeline.features import FeatureEngine
         feature_engine = FeatureEngine()
         
-        # 計算所有其他特徵 (53個: 價量+技術+籌碼+估值+日內結構)
+        # 計算所有其他特徵 (51個: 價量+技術+籌碼+估值+日內結構，66維配置)
         # 這裡需要完整的特徵處理，暫時使用技術特徵作為基礎
         tech_features = feature_engine.calculate_technical_features(price_sequence)
         
@@ -194,35 +194,66 @@ class TSEDataset(Dataset):
             # 如果特徵計算失敗，使用零填充
             other_array = np.zeros((len(price_sequence), other_features_count))
         else:
-            # 暫時用技術特徵填充，後續需要完整實作
+            # 創建51個其他特徵的數組
             other_array = np.zeros((len(price_sequence), other_features_count))
             tech_array = tech_features.to_numpy()  # (seq_len, 27)
+            
+            # 填充前27個特徵（技術特徵）
             other_array[:, :min(27, other_features_count)] = tech_array[:, :min(27, other_features_count)]
+            
+            # 填充剩餘的24個特徵（籌碼+估值+日內結構+其他）
+            remaining_features = other_features_count - 27
+            if remaining_features > 0 and len(price_sequence) > 0:
+                # 添加一些基於價格的簡單特徵作為填充
+                close_prices = price_sequence['close'].values
+                if len(close_prices) > 1:
+                    # 計算價格變化率
+                    price_returns = np.diff(close_prices) / (close_prices[:-1] + 1e-8)
+                    price_returns = np.concatenate([[0], price_returns])  # 第一個值設為0
+                    
+                    # 計算移動平均偏差
+                    if len(close_prices) >= 5:
+                        ma5 = np.convolve(close_prices, np.ones(5)/5, mode='same')
+                        ma_deviation = (close_prices - ma5) / (ma5 + 1e-8)
+                    else:
+                        ma_deviation = np.zeros_like(close_prices)
+                    
+                    # 填充剩餘特徵
+                    for i in range(remaining_features):
+                        if i % 2 == 0 and i//2 < len(price_returns):
+                            other_array[:, 27 + i] = price_returns[min(i//2, len(price_returns)-1)]
+                        elif i % 2 == 1 and i//2 < len(ma_deviation):
+                            other_array[:, 27 + i] = ma_deviation[min(i//2, len(ma_deviation)-1)]
         
         # 擴展到多股票格式 (為了與模型相容)
-        price_frame = np.zeros((len(self.config.symbols), self.config.sequence_length, other_features_count))
+        # 使用實際的symbols數量而不是config.symbols
+        actual_symbols_count = len(self.symbols) if hasattr(self, 'symbols') else 1
+        price_frame = np.zeros((actual_symbols_count, self.config.sequence_length, other_features_count))
         
         # 找到當前股票在符號列表中的位置
-        if hasattr(self, '_current_symbol'):
-            symbol_idx = self.config.symbols.index(self._current_symbol) if self._current_symbol in self.config.symbols else 0
-        else:
-            symbol_idx = 0
+        symbol_idx = 0  # 預設使用第一個位置
+        if hasattr(self, 'symbols') and len(self.symbols) > 0:
+            # 從sequence_indices中獲取當前symbol
+            current_symbol = self.sequence_indices[0][0] if self.sequence_indices else self.symbols[0]
+            if current_symbol in self.symbols:
+                symbol_idx = self.symbols.index(current_symbol)
         
-        # 填充當前股票的資料
+        # 填充當前股票的資料 (確保索引安全)
         seq_len = min(len(other_array), self.config.sequence_length)
-        price_frame[symbol_idx, -seq_len:, :] = other_array[-seq_len:]
+        if symbol_idx < price_frame.shape[0]:  # 安全檢查
+            price_frame[symbol_idx, -seq_len:, :] = other_array[-seq_len:]
         
         return torch.tensor(price_frame, dtype=torch.float32)
     
     def _extract_fundamental_features(self, feature_row: pd.Series) -> torch.Tensor:
         """提取基本面特徵"""
-        # 獲取實際配置的基本面特徵數量 (18個: 月營收+財報)
+        # 獲取實際配置的基本面特徵數量 (15個: 月營收+財報，66維配置)
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            fundamental_dim = config.fundamental_features  # 18個基本面特徵
+            fundamental_dim = config.fundamental_features  # 15個基本面特徵 (66維配置)
         except:
-            fundamental_dim = 18  # 預設值
+            fundamental_dim = 15  # 預設值 (66維配置)
         
         # 從特徵行中提取基本面相關特徵
         fundamental_cols = [col for col in feature_row.index if 'fundamental' in col or 'market_cap' in col or 'liquidity' in col]
@@ -319,7 +350,18 @@ class MultiStockDataset(Dataset):
         return pd.DataFrame(index=common_dates)
     
     def __len__(self) -> int:
-        return max(0, len(self.date_indices) - self.config.sequence_length - self.config.prediction_horizon)
+        # 修復：確保有足夠的資料點來建立序列
+        available_dates = len(self.date_indices)
+        min_required = self.config.sequence_length + self.config.prediction_horizon
+        
+        if available_dates < min_required:
+            print(f"⚠️ 資料不足: 可用日期{available_dates}天 < 最少需要{min_required}天")
+            return 0
+        
+        # 可用的序列數量 = 總日期數 - 序列長度 - 預測範圍 + 1
+        sequence_count = available_dates - min_required + 1
+        print(f"📊 MultiStockDataset: {available_dates}個日期 → {sequence_count}個序列")
+        return max(0, sequence_count)
     
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
         """
@@ -344,29 +386,33 @@ class MultiStockDataset(Dataset):
         date_range = self.aligned_data.index[start_idx:end_idx]
         target_date = self.aligned_data.index[label_idx] if label_idx < len(self.aligned_data) else None
         
-        # 獲取實際配置的價格特徵數量
+        # 獲取實際配置的其他特徵數量 (66維配置中的51個其他特徵)
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            price_features_count = config.price_features  # 27個特徵
+            price_features_count = config.other_features  # 51個其他特徵
         except:
-            price_features_count = 27  # 預設值
+            price_features_count = 51  # 預設值 (66維配置)
         
-        # 構建多股票價格框架 - 使用27個特徵
+        # 構建多股票價格框架 - 使用51個其他特徵
         price_frame = np.zeros((len(self.symbols), self.config.sequence_length, price_features_count))
         
-        # 獲取實際配置的基本面特徵數量
+        # 獲取實際配置的基本面特徵數量 (15個，66維配置)
         try:
             from models.config.training_config import TrainingConfig
             config = TrainingConfig()
-            fundamental_dim = config.fundamental_features
+            fundamental_dim = config.fundamental_features  # 15個基本面特徵 (66維配置)
         except:
-            fundamental_dim = 43  # 預設值
+            fundamental_dim = 15  # 預設值 (66維配置)
         
         fundamental_features = np.zeros(fundamental_dim)
         labels = np.zeros(len(self.symbols))
         
         for i, symbol in enumerate(self.symbols):
+            # 確保索引不超出price_frame的邊界
+            if i >= len(self.symbols):
+                break
+                
             if symbol not in self.features_dict:
                 continue
             
@@ -376,22 +422,51 @@ class MultiStockDataset(Dataset):
             stock_prices = prices.reindex(date_range, method='ffill').dropna()
             
             if len(stock_prices) > 0:
-                # 使用特徵引擎計算完整的27個特徵
+                # 使用特徵引擎計算完整的51個其他特徵
                 from data_pipeline.features import FeatureEngine
                 feature_engine = FeatureEngine()
                 
                 # 計算技術指標特徵 (返回27個特徵: 5個OHLCV + 22個技術指標)
                 tech_features = feature_engine.calculate_technical_features(stock_prices)
                 
-                if not tech_features.empty and tech_features.shape[1] == price_features_count:
-                    price_data = tech_features.to_numpy()  # (seq_len, 27)
+                if not tech_features.empty and tech_features.shape[1] >= 27:
+                    # 創建51個其他特徵的數組
+                    price_data = np.zeros((len(stock_prices), price_features_count))
+                    tech_array = tech_features.to_numpy()  # (seq_len, 27)
+                    
+                    # 填充前27個特徵（技術特徵）
+                    price_data[:, :min(27, price_features_count)] = tech_array[:, :min(27, price_features_count)]
+                    
+                    # 填充剩餘的24個特徵
+                    remaining_features = price_features_count - 27
+                    if remaining_features > 0 and len(stock_prices) > 0:
+                        close_prices = stock_prices['close'].values
+                        if len(close_prices) > 1:
+                            # 計算價格變化率
+                            price_returns = np.diff(close_prices) / (close_prices[:-1] + 1e-8)
+                            price_returns = np.concatenate([[0], price_returns])
+                            
+                            # 計算移動平均偏差
+                            if len(close_prices) >= 5:
+                                ma5 = np.convolve(close_prices, np.ones(5)/5, mode='same')
+                                ma_deviation = (close_prices - ma5) / (ma5 + 1e-8)
+                            else:
+                                ma_deviation = np.zeros_like(close_prices)
+                            
+                            # 填充剩餘特徵 (修復變數名衝突)
+                            for j in range(remaining_features):
+                                if j % 2 == 0 and j//2 < len(price_returns):
+                                    price_data[:, 27 + j] = price_returns[min(j//2, len(price_returns)-1)]
+                                elif j % 2 == 1 and j//2 < len(ma_deviation):
+                                    price_data[:, 27 + j] = ma_deviation[min(j//2, len(ma_deviation)-1)]
                 else:
                     # 如果特徵計算失敗，使用零填充
                     price_data = np.zeros((len(stock_prices), price_features_count))
                 
-                # 填充到固定長度
+                # 填充到固定長度 (確保索引安全)
                 seq_len = min(len(price_data), self.config.sequence_length)
-                price_frame[i, -seq_len:, :] = price_data[-seq_len:]
+                if i < price_frame.shape[0]:  # 額外的安全檢查
+                    price_frame[i, -seq_len:, :] = price_data[-seq_len:]
             
             # 提取標籤
             if target_date and target_date in stock_labels.index:

@@ -53,17 +53,14 @@ def test_feature_dimension_fix():
         feature_count = features.shape[1]
         print(f"📊 特徵維度結果: {feature_count}")
         
-        # 檢查特徵維度 (應該是68維，不包含4個帳戶特徵)
-        expected_without_account = 68
-        if feature_count == expected_without_account:
-            print_status("特徵維度修復", "SUCCESS", f"成功達到{feature_count}維特徵 (不含4個帳戶特徵)")
-            print("💡 總計72維: 68維特徵工程 + 4維帳戶特徵(由環境提供)")
-            return True, features
-        elif feature_count == 72:
-            print_status("特徵維度修復", "SUCCESS", f"達到72維特徵 (可能包含帳戶特徵)")
+        # 檢查特徵維度 (應該是66維，帳戶特徵暫不使用)
+        expected_features = 66
+        if feature_count == expected_features:
+            print_status("特徵維度修復", "SUCCESS", f"成功達到{feature_count}維特徵")
+            print("💡 當前訓練計畫: 66維特徵 (帳戶特徵未來待加入)")
             return True, features
         else:
-            print_status("特徵維度修復", "FAILED", f"特徵維度為{feature_count}，期望68維(+4帳戶)或72維")
+            print_status("特徵維度修復", "FAILED", f"特徵維度為{feature_count}，期望66維")
             return False, features
             
     except Exception as e:
@@ -158,8 +155,8 @@ def test_training_config_alignment():
         # 驗證配置一致性
         calculated_total = config.fundamental_features + config.other_features + config.account_features
         
-        if config.total_features == 72 and calculated_total == 72:
-            print_status("訓練配置對齊", "SUCCESS", "72維配置正確")
+        if config.total_features == 66 and calculated_total == 66:
+            print_status("訓練配置對齊", "SUCCESS", "66維配置正確")
             return True
         else:
             print_status("訓練配置對齊", "FAILED", f"配置不一致: 聲明{config.total_features} vs 計算{calculated_total}")

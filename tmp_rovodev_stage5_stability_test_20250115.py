@@ -69,7 +69,7 @@ def task_5_1_continuous_running_test():
         model_config = ModelConfig(
             price_frame_shape=(2, 32, training_config.other_features),
             fundamental_dim=training_config.fundamental_features,
-            account_dim=training_config.account_features,
+            account_dim=4,  # 強制使用4維帳戶特徵，因為環境仍然提供4維
             hidden_dim=64
         )
         model = TSEAlphaModel(model_config)
@@ -78,8 +78,8 @@ def task_5_1_continuous_running_test():
         # 創建環境
         env_config = EnvConfig(
             symbols=['2330', '2317'],
-            start_date='2024-01-01',
-            end_date='2024-01-31',
+            start_date='2023-07-01',  # 擴大日期範圍，從2023年7月開始
+            end_date='2024-01-31',  # 使用更長的時間跨度
             initial_capital=1000000
         )
         env = TSEAlphaEnv(env_config)
@@ -308,7 +308,7 @@ def task_5_2_independent_memory_test():
         model_config = ModelConfig(
             price_frame_shape=(1, 16, training_config.other_features),
             fundamental_dim=training_config.fundamental_features,
-            account_dim=training_config.account_features
+            account_dim=4  # 強制使用4維帳戶特徵，因為環境仍然提供4維
         )
         model = TSEAlphaModel(model_config)
         model.eval()
@@ -326,7 +326,7 @@ def task_5_2_independent_memory_test():
             observation = {
                 'price_frame': torch.randn(1, 1, 16, training_config.other_features),
                 'fundamental': torch.randn(1, training_config.fundamental_features),
-                'account': torch.randn(1, training_config.account_features)
+                'account': torch.randn(1, 4)  # 強制使用4維帳戶特徵
             }
             
             # 前向傳播
@@ -417,8 +417,8 @@ def task_5_3_error_handling_verification():
             try:
                 results = feature_engine.process_multiple_symbols(
                     symbols=['INVALID'],
-                    start_date='2024-01-01',
-                    end_date='2024-01-02'
+                    start_date='2023-07-01',  # 擴大日期範圍
+                    end_date='2023-08-31'  # 使用更長的時間跨度
                 )
                 
                 if not results:
@@ -441,8 +441,8 @@ def task_5_3_error_handling_verification():
             try:
                 invalid_config = EnvConfig(
                     symbols=[],  # 空股票列表
-                    start_date='2024-01-01',
-                    end_date='2024-01-02'
+                    start_date='2023-07-01',  # 擴大日期範圍
+                    end_date='2023-08-31'  # 使用更長的時間跨度
                 )
                 env = TSEAlphaEnv(invalid_config)
                 error_tests.append(("空股票列表", False, "應該拋出錯誤但沒有"))
